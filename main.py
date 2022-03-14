@@ -322,21 +322,22 @@ elif sys.argv[1]=="ar":
     data[0:2, :] = data1[0:2, :]
     data[2, :] = data2[2, :]
     t = np.arange(0, data.shape[1])
-    train_data = data[:, :600]
-    test_data = data[:, 600:]
-    lags_list=np.array([2,5,10,20,30,40,50,60,70,80,90,100])
-    test_residuals=[]
+    train_data = data[:, :500]
+    valid_data = data[:, 500:600]
+    test_data = data[:,600:]
+    lags_list=np.array([2,5,10,20,30,40,50,60,70,80,90])
+    val_residuals=[]
     for lags in lags_list:
-        train_pred,train_res,test_pred,test_res = AR_fit(train_data,test_data,0,lags)
-        test_residuals.append(np.sum(test_res**2)/test_res.shape[0])
+        train_pred,train_res,test_pred,test_res = AR_fit(train_data,valid_data,0,lags)
+        val_residuals.append(np.sum(test_res**2)/test_res.shape[0])
 
 
     plt.figure(1)
-    plt.semilogy(lags_list,test_residuals)
+    plt.semilogy(lags_list,val_residuals)
     plt.xlabel("Number of Lags")
-    plt.ylabel("Testing SSR")
+    plt.ylabel("Validation SSR")
 
-    best_lag=30
+    best_lag=60
     train_pred, train_res, test_pred, test_res = AR_fit(train_data, test_data, 0, best_lag)
     plt.figure(2)
     plt.plot(test_pred)
